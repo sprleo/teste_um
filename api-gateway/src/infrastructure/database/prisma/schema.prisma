@@ -1,0 +1,44 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Order {
+  id           String      @id @default(uuid())
+  externalId   String      @unique @map("external_id")
+  customerId   String      @map("customer_id")
+  customerName String      @map("customer_name")
+  totalAmount  Float       @map("total_amount")
+  status       OrderStatus @default(pending)
+  errorMessage String?     @map("error_message")
+  createdAt    DateTime    @default(now()) @map("created_at")
+  updatedAt    DateTime    @updatedAt @map("updated_at")
+  items        OrderItem[]
+
+  @@index([status])
+  @@index([customerId])
+  @@map("orders")
+}
+
+model OrderItem {
+  id          String @id @default(uuid())
+  orderId     String @map("order_id")
+  productId   String @map("product_id")
+  productName String @map("product_name")
+  quantity    Int
+  unitPrice   Float  @map("unit_price")
+  order       Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@map("order_items")
+}
+
+enum OrderStatus {
+  pending
+  processing
+  completed
+  failed
+}
