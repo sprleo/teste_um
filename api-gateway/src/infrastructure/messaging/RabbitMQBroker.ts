@@ -1,9 +1,9 @@
-import amqplib, { type Channel, type Connection } from "amqplib";
+import amqplib, { type Channel, type ChannelModel } from "amqplib";
 import type { IMessageBroker } from "../../domain/interfaces/IMessageBroker";
 import { QUEUES, EXCHANGES } from "./queues";
 
 export class RabbitMQBroker implements IMessageBroker {
-  private connection: Connection | null = null;
+  private connection: ChannelModel | null = null;
   private channel: Channel | null = null;
 
   constructor(private readonly url: string) {}
